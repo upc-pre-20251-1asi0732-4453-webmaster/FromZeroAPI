@@ -1,5 +1,6 @@
 package com.fromzero.backend.iam.interfaces.acl;
 
+import com.fromzero.backend.iam.domain.model.aggregates.User;
 import com.fromzero.backend.iam.domain.model.commands.SignUpDeveloperCommand;
 import com.fromzero.backend.iam.domain.model.commands.SignUpEnterpriseCommand;
 import com.fromzero.backend.iam.domain.model.queries.GetUserByIdQuery;
@@ -7,6 +8,7 @@ import com.fromzero.backend.iam.domain.model.queries.GetUserByUsernameQuery;
 import com.fromzero.backend.iam.domain.services.UserCommandService;
 import com.fromzero.backend.iam.domain.services.UserQueryService;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
  *     This class is a part of the ACL layer.
  * </p>
  */
+@Service
 public class IamContextFacade {
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
@@ -81,5 +84,11 @@ public class IamContextFacade {
         var result = userQueryService.handle(getUserByIdQuery);
         if (result.isEmpty()) return Strings.EMPTY;
         return result.get().getUsername();
+    }
+
+    public User getUserById(Long userId) {
+        var getUserByIdQuery = new GetUserByIdQuery(userId);
+        var user = this.userQueryService.handle(getUserByIdQuery);
+        return user.orElse(null);
     }
 }
