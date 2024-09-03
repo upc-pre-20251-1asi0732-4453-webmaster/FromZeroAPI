@@ -1,4 +1,4 @@
-package com.fromzero.backend.deliverables.application.internal.queryServices;
+package com.fromzero.backend.deliverables.application.internal.queryservices;
 
 import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
 import com.fromzero.backend.deliverables.domain.model.queries.GetAllDeliverablesByProjectIdQuery;

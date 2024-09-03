@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = "/v1/api/projects", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/projects", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Projects", description = "Projects Management Endpoints")
 public class ProjectController {
     private final ProjectCommandService projectCommandService;
@@ -63,7 +63,7 @@ public class ProjectController {
                     var getLanguageById = new GetProgrammingLanguageByIdQuery(item);
                     return this.programmingLanguagesQueryService.handle(getLanguageById);
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         // Convertir los Optional a ProgrammingLanguage
         List<ProgrammingLanguage> programmingLanguages = optionalProgrammingLanguages.stream()
@@ -78,7 +78,7 @@ public class ProjectController {
                     var getFrameworkById = new GetFrameworkByIdQuery(item);
                     return this.frameworksQueryService.handle(getFrameworkById);
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         List<Framework> frameworksList=optionalFrameworks.stream()
                 .map(Optional::get)

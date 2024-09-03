@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = "/v1/api/deliverables", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/deliverables", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Deliverables", description = "Deliverables Management Endpoints")
 public class DeliverableController {
     private final DeliverableCommandService deliverableCommandService;

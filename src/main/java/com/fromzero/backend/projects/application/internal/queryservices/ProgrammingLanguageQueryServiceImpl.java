@@ -1,4 +1,4 @@
-package com.fromzero.backend.projects.application.internal.eventhandlers;
+package com.fromzero.backend.projects.application.internal.queryservices;
 
 import com.fromzero.backend.projects.domain.model.aggregates.ProgrammingLanguage;
 import com.fromzero.backend.projects.domain.model.queries.GetProgrammingLanguageByIdQuery;
