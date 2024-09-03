@@ -1,7 +1,7 @@
 package com.fromzero.backend.user.interfaces.rest.transform;
 
 import com.fromzero.backend.user.domain.model.commands.UpdateDeveloperCompletedProjectsCommand;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.DeveloperRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.DeveloperRepository;
 import com.fromzero.backend.user.interfaces.rest.resources.UpdateDeveloperCompletedProjectsResource;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
 

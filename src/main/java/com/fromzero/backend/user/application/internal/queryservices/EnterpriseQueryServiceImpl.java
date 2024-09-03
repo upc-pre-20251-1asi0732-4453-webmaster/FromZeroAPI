@@ -5,7 +5,7 @@ import com.fromzero.backend.user.domain.model.queries.GetAllEnterprisesAsyncQuer
 import com.fromzero.backend.user.domain.model.queries.GetEnterpriseByIdQuery;
 import com.fromzero.backend.user.domain.model.queries.GetEnterpriseByUserIdAsyncQuery;
 import com.fromzero.backend.user.domain.services.EnterpriseQueryService;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.EnterpriseRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.EnterpriseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import com.fromzero.backend.user.domain.model.aggregates.Developer;
 import com.fromzero.backend.user.domain.model.commands.UpdateDeveloperCommand;
 import com.fromzero.backend.user.domain.model.commands.UpdateDeveloperCompletedProjectsCommand;
 import com.fromzero.backend.user.domain.services.DeveloperCommandService;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.DeveloperRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.DeveloperRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

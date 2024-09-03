@@ -4,7 +4,6 @@ import com.fromzero.backend.iam.application.internal.outboundservices.hashing.Ha
 import com.fromzero.backend.iam.application.internal.outboundservices.tokens.TokenService;
 import com.fromzero.backend.iam.domain.model.aggregates.User;
 import com.fromzero.backend.iam.domain.model.commands.SignInCommand;
-import com.fromzero.backend.iam.domain.model.commands.SignUpCommand;
 import com.fromzero.backend.iam.domain.model.commands.SignUpDeveloperCommand;
 import com.fromzero.backend.iam.domain.model.commands.SignUpEnterpriseCommand;
 import com.fromzero.backend.iam.domain.model.entities.Role;
@@ -15,8 +14,8 @@ import com.fromzero.backend.iam.infrastructure.persistence.jpa.repositories.Role
 import com.fromzero.backend.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
 import com.fromzero.backend.user.domain.model.aggregates.Enterprise;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.DeveloperRepository;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.EnterpriseRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.DeveloperRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.EnterpriseRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Service;
 

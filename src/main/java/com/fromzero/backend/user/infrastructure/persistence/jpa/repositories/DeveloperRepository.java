@@ -1,4 +1,4 @@
-package com.fromzero.backend.user.infrastructure.persistence.jpa;
+package com.fromzero.backend.user.infrastructure.persistence.jpa.repositories;
 
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
 import org.springframework.data.jpa.repository.JpaRepository;

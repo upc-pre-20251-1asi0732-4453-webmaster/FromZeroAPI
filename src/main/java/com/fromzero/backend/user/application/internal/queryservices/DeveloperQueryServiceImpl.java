@@ -5,7 +5,7 @@ import com.fromzero.backend.user.domain.model.queries.GetAllDevelopersAsyncQuery
 import com.fromzero.backend.user.domain.model.queries.GetDeveloperByIdQuery;
 import com.fromzero.backend.user.domain.model.queries.GetDeveloperByUserIdAsyncQuery;
 import com.fromzero.backend.user.domain.services.DeveloperQueryService;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.DeveloperRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.DeveloperRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

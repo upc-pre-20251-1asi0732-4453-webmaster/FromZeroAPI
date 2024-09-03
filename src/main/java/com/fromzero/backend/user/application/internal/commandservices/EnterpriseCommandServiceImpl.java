@@ -3,7 +3,7 @@ package com.fromzero.backend.user.application.internal.commandservices;
 import com.fromzero.backend.user.domain.model.aggregates.Enterprise;
 import com.fromzero.backend.user.domain.model.commands.UpdateEnterpriseCommand;
 import com.fromzero.backend.user.domain.services.EnterpriseCommandService;
-import com.fromzero.backend.user.infrastructure.persistence.jpa.EnterpriseRepository;
+import com.fromzero.backend.user.infrastructure.persistence.jpa.repositories.EnterpriseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
