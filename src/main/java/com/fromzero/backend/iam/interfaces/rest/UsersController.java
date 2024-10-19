@@ -36,6 +36,8 @@ public class UsersController {
      * @return a list of user resources
      * @see UserResource
      */
+
+
     @GetMapping
     public ResponseEntity<List<UserResource>> getAllUsers() {
         var getAllUsersQuery = new GetAllUsersQuery();

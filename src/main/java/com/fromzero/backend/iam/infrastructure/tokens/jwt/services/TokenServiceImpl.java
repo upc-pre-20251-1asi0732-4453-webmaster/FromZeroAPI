@@ -18,18 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
-/**
- * Service implementation for handling JSON Web Tokens (JWT).
- * Implementación del servicio para manejar tokens JSON Web (JWT).
- *
- * This class provides methods for generating, validating, and extracting
- * information from JWT tokens. It utilizes the secret key and expiration
- * days defined in the application properties.
- *
- * Esta clase proporciona métodos para generar, validar y extraer
- * información de los tokens JWT. Utiliza la clave secreta y los días de
- * expiración definidos en las propiedades de la aplicación.
- */
+
 @Service
 public class TokenServiceImpl implements BearerTokenService {
     private final Logger LOGGER = LoggerFactory.getLogger(TokenServiceImpl.class);
@@ -44,43 +33,17 @@ public class TokenServiceImpl implements BearerTokenService {
     @Value("${authorization.jwt.expiration.days}")
     private int expirationDays;
 
-    /**
-     * Generates a JWT token using the provided authentication object.
-     * Genera un token JWT utilizando el objeto de autenticación proporcionado.
-     *
-     * @param authentication the authentication object containing user details
-     *                       el objeto de autenticación que contiene detalles del usuario
-     * @return a JWT token as a String
-     *         un token JWT como una cadena
-     * @see Authentication
-     */
+
     @Override
     public String generateToken(Authentication authentication) {
         return buildTokenWithDefaultParameters(authentication.getName());
     }
 
-    /**
-     * Generates a JWT token for the given username.
-     * Genera un token JWT para el nombre de usuario proporcionado.
-     *
-     * @param username the username for which the token is to be generated
-     *                 el nombre de usuario para el cual se generará el token
-     * @return a JWT token as a String
-     *         un token JWT como una cadena
-     */
+
     public String generateToken(String username) {
         return buildTokenWithDefaultParameters(username);
     }
 
-    /**
-     * Builds a JWT token with the default expiration time using the provided username.
-     * Construye un token JWT con el tiempo de expiración predeterminado usando el nombre de usuario proporcionado.
-     *
-     * @param username the username to be included in the token
-     *                 el nombre de usuario que se incluirá en el token
-     * @return a JWT token as a String
-     *         un token JWT como una cadena
-     */
     private String buildTokenWithDefaultParameters(String username) {
         var issuedAt = new Date();
         var expiration = DateUtils.addDays(issuedAt, expirationDays);

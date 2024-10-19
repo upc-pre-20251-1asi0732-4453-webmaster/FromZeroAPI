@@ -13,23 +13,14 @@ import java.util.Optional;
 
 @Service
 public class UserQueryServiceImpl implements UserQueryService {
+
     private final UserRepository userRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param userRepository {@link UserRepository} instance.
-     */
     public UserQueryServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    /**
-     * This method is used to handle {@link GetAllUsersQuery} query.
-     * @param query {@link GetAllUsersQuery} instance.
-     * @return {@link List} of {@link User} instances.
-     * @see GetAllUsersQuery
-     */
+
     @Override
     public List<User> handle(GetAllUsersQuery query) {
         return userRepository.findAll();

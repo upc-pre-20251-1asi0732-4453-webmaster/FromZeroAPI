@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@With
+@With // es para que se generen los métodos with en el objeto
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
