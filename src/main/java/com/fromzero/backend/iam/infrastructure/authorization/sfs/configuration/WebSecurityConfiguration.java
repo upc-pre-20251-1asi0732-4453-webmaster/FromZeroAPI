@@ -101,6 +101,7 @@ public class WebSecurityConfiguration {
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
                                 "/webjars/**").permitAll()
+                        //.requestMatchers("/**").permitAll()   para permitir acceder cualquier edpoitn sin pasarle token
                         .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);

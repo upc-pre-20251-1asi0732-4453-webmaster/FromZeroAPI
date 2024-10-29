@@ -61,4 +61,8 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     public void serUsernmae (String username){
         this.username = username;
     }
+
+    public List<String> getSerializedRoles() {
+        return this.roles.stream().map(role -> role.getName().name()).toList();
+    }
 }
