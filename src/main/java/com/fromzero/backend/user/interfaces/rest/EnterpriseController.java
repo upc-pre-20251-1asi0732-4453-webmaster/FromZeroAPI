@@ -2,6 +2,7 @@ package com.fromzero.backend.user.interfaces.rest;
 
 import com.fromzero.backend.user.domain.model.queries.GetAllEnterprisesAsyncQuery;
 import com.fromzero.backend.user.domain.model.queries.GetEnterpriseByIdQuery;
+import com.fromzero.backend.user.domain.model.queries.GetEnterpriseByUserIdAsyncQuery;
 import com.fromzero.backend.user.domain.services.EnterpriseCommandService;
 import com.fromzero.backend.user.domain.services.EnterpriseQueryService;
 import com.fromzero.backend.user.interfaces.rest.resources.EnterpriseResource;
@@ -38,6 +39,17 @@ public class EnterpriseController {
     public ResponseEntity<EnterpriseResource> getEnterpriseById(@PathVariable Long enterpriseId) {
         var getEnterpriseByIdQuery = new GetEnterpriseByIdQuery(enterpriseId);
         var enterprise = enterpriseQueryService.handle(getEnterpriseByIdQuery);
+        if (enterprise.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var enterpriseResource = EnterpriseResourceFromEntityAssembler.toResourceFromEntity(enterprise.get());
+        return ResponseEntity.ok(enterpriseResource);
+    }
+
+    @GetMapping(value = "/user/{userId}")
+    public ResponseEntity<EnterpriseResource> getEnterpriseByUserId(@PathVariable Long userId) {
+        var getEnterpriseByUserIdQuery = new GetEnterpriseByUserIdAsyncQuery(userId);
+        var enterprise = enterpriseQueryService.handle(getEnterpriseByUserIdQuery);
         if (enterprise.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

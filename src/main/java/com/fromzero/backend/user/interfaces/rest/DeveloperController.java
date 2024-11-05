@@ -3,6 +3,7 @@ package com.fromzero.backend.user.interfaces.rest;
 
 import com.fromzero.backend.user.domain.model.queries.GetAllDevelopersAsyncQuery;
 import com.fromzero.backend.user.domain.model.queries.GetDeveloperByIdQuery;
+import com.fromzero.backend.user.domain.model.queries.GetDeveloperByUserIdAsyncQuery;
 import com.fromzero.backend.user.domain.services.DeveloperCommandService;
 import com.fromzero.backend.user.domain.services.DeveloperQueryService;
 import com.fromzero.backend.user.interfaces.rest.resources.DeveloperResource;
@@ -40,6 +41,17 @@ public class DeveloperController {
     public ResponseEntity<DeveloperResource> getDeveloperById(@PathVariable Long developerId) {
         var getDeveloperByIdQuery = new GetDeveloperByIdQuery(developerId);
         var developer = developerQueryService.handle(getDeveloperByIdQuery);
+        if (developer.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var developerResource = DeveloperResourceFromEntityAssembler.toResourceFromEntity(developer.get());
+        return ResponseEntity.ok(developerResource);
+    }
+
+    @GetMapping(value = "/user/{userId}")
+    public ResponseEntity<DeveloperResource> getDeveloperByUserId(@PathVariable Long userId) {
+        var getDeveloperByUserIdAsyncQuery = new GetDeveloperByUserIdAsyncQuery(userId);
+        var developer = developerQueryService.handle(getDeveloperByUserIdAsyncQuery);
         if (developer.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

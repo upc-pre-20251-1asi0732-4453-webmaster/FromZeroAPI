@@ -34,7 +34,7 @@ public class Developer extends AuditableAbstractAggregateRoot<Developer> {
     private String profileImgUrl = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
 
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Developer(User user, String firstName, String lastName, String description, String country, String phone, int completedProjects, String specialties, String profileImgUrl){
