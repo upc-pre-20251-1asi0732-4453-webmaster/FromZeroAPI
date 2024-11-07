@@ -2,6 +2,7 @@ package com.fromzero.backend.deliverables.application.internal.commandservices;
 
 import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
 import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
+import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
 import com.fromzero.backend.deliverables.domain.services.DeliverableCommandService;
@@ -67,5 +68,19 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         }
 
     }
+    @Override
+    public Optional<Deliverable> handle(UpdateDeliverableCommand command) {
+        Optional<Deliverable> deliverableOptional = deliverableRepository.findById(command.deliverableId());
+        if (deliverableOptional.isPresent()) {
+            Deliverable deliverable = deliverableOptional.get();
+            deliverable.setName(command.name());
+            deliverable.setDescription(command.description());
+            deliverable.setDate(command.date());
+            deliverableRepository.save(deliverable);
+            return Optional.of(deliverable);
+        }
+        return Optional.empty();
+    }
+
 }
 

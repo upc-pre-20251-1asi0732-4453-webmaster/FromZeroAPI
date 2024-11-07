@@ -3,6 +3,7 @@ package com.fromzero.backend.deliverables.interfaces;
 
 //import com.acme.fromzeroapi.deliverables.domain.model.commands.CreateDeliverableCommand;
 
+import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
 import com.fromzero.backend.deliverables.domain.model.queries.GetAllDeliverablesByProjectIdQuery;
@@ -12,6 +13,7 @@ import com.fromzero.backend.deliverables.domain.services.DeliverableCommandServi
 import com.fromzero.backend.deliverables.domain.services.DeliverableQueryService;
 import com.fromzero.backend.deliverables.interfaces.rest.resources.CreateDeliverableResource;
 import com.fromzero.backend.deliverables.interfaces.rest.resources.DeliverableResource;
+import com.fromzero.backend.deliverables.interfaces.rest.resources.UpdateDeliverableResource;
 import com.fromzero.backend.deliverables.interfaces.rest.transform.CreateDeliverableCommandFromResourceAssembler;
 import com.fromzero.backend.deliverables.interfaces.rest.transform.DeliverableResourceFromEntityAssembler;
 import com.fromzero.backend.projects.interfaces.acl.ProjectContextFacade;
@@ -128,6 +130,18 @@ public class DeliverableController {
         }
 
         var deliverableResource = DeliverableResourceFromEntityAssembler.toResourceFromEntity(deliverable.get());
+        return ResponseEntity.ok(deliverableResource);
+    }
+
+
+    @PutMapping(value = "/{deliverableId}")
+    public ResponseEntity<DeliverableResource> updateDeliverable(@PathVariable Long deliverableId, @RequestBody UpdateDeliverableResource resource) {
+        UpdateDeliverableCommand command = new UpdateDeliverableCommand(deliverableId, resource.name(), resource.description(), resource.date());
+        var updatedDeliverable = deliverableCommandService.handle(command);
+        if (updatedDeliverable.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var deliverableResource = DeliverableResourceFromEntityAssembler.toResourceFromEntity(updatedDeliverable.get());
         return ResponseEntity.ok(deliverableResource);
     }
 }
