@@ -75,7 +75,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             Deliverable deliverable = deliverableOptional.get();
             deliverable.setName(command.name());
             deliverable.setDescription(command.description());
-            deliverable.setDate(command.date());
+            deliverable.setDate(String.valueOf(command.date()));
             deliverableRepository.save(deliverable);
             return Optional.of(deliverable);
         }

@@ -21,7 +21,7 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
     private String description;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Setter
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
     public Deliverable(CreateDeliverableCommand command) {
         this.name=command.name();
         this.description=command.description();
-        this.date=command.date();
+        this.date= String.valueOf(command.date());
         this.state="Pending";
         this.developerMessage=null;
         this.project=command.project();
