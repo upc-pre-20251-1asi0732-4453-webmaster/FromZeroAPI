@@ -116,8 +116,8 @@ public class ProjectController {
     }
 
     @Operation(summary = "Get All Project By State")
-    @GetMapping(value = "/by-state")
-    public ResponseEntity<List<ProjectResource>> getAllProjectsByState(@RequestParam String state) {
+    @GetMapping(value = "/by-state/{state}")
+    public ResponseEntity<List<ProjectResource>> getAllProjectsByState(@PathVariable String state) {
         try {
             var getAllProjectsByStateQuery = new GetAllProjectsByStateQuery(state);
             var projects = this.projectQueryService.handle(getAllProjectsByStateQuery);
