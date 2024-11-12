@@ -5,6 +5,7 @@ import com.fromzero.backend.projects.domain.model.aggregates.Framework;
 import com.fromzero.backend.projects.domain.model.aggregates.ProgrammingLanguage;
 import com.fromzero.backend.projects.domain.model.commands.AssignProjectDeveloperCommand;
 import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
+import com.fromzero.backend.projects.domain.model.commands.DeleteProjectCommand;
 import com.fromzero.backend.projects.domain.model.commands.UpdateProjectCandidatesListCommand;
 import com.fromzero.backend.projects.domain.model.queries.*;
 import com.fromzero.backend.projects.domain.services.FrameworksQueryService;
@@ -22,11 +23,13 @@ import com.fromzero.backend.projects.interfaces.rest.transform.UpdatedProjectRes
 import com.fromzero.backend.user.interfaces.acl.ProfileContextFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -202,6 +205,17 @@ public class ProjectController {
                 .map(ProjectResourceFromEntityAssembler::toResourceFromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(projectResources);
+    }
+
+    @DeleteMapping(value = "/{projectId}")
+    public ResponseEntity<?> deleteProject(@PathVariable Long projectId) {
+        try {
+            var deleteProjectCommand = new DeleteProjectCommand(projectId);
+            projectCommandService.handle(deleteProjectCommand);
+            return ResponseEntity.ok(Map.of("message", "Project with given id successfully deleted"));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Cannot delete project due to existing dependencies"));
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.fromzero.backend.deliverables.interfaces;
 
 //import com.acme.fromzeroapi.deliverables.domain.model.commands.CreateDeliverableCommand;
 
+import com.fromzero.backend.deliverables.domain.model.commands.DeleteDeliverableCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
@@ -143,5 +145,12 @@ public class DeliverableController {
         }
         var deliverableResource = DeliverableResourceFromEntityAssembler.toResourceFromEntity(updatedDeliverable.get());
         return ResponseEntity.ok(deliverableResource);
+    }
+
+    @DeleteMapping(value = "/{deliverableId}")
+    public ResponseEntity<?> deleteDeliverable(@PathVariable Long deliverableId) {
+        var deleteDeliverableCommand =new DeleteDeliverableCommand(deliverableId);
+        deliverableCommandService.handle(deleteDeliverableCommand);
+        return ResponseEntity.ok(Map.of("message", "Deliverable with given id successfully deleted"));
     }
 }

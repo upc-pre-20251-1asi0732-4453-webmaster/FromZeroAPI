@@ -1,10 +1,7 @@
 package com.fromzero.backend.deliverables.application.internal.commandservices;
 
 import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
-import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
+import com.fromzero.backend.deliverables.domain.model.commands.*;
 import com.fromzero.backend.deliverables.domain.services.DeliverableCommandService;
 import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.repositories.DeliverableRepository;
 import org.springframework.stereotype.Service;
@@ -82,5 +79,17 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         return Optional.empty();
     }
 
+    @Override
+    public void handle(DeleteDeliverableCommand command) {
+        if(!deliverableRepository.existsById(command.deliverableId())){
+            throw new IllegalArgumentException("Deliverable does not exist");
+        }
+        try {
+            deliverableRepository.deleteById(command.deliverableId());
+        }catch (Exception e){
+            throw new IllegalArgumentException("Error while deleting deliverable: "+e.getMessage());
+        }
+
+    }
 }
 

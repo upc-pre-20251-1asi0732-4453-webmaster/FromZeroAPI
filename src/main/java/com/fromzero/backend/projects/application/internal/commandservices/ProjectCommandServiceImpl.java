@@ -1,10 +1,7 @@
 package com.fromzero.backend.projects.application.internal.commandservices;
 
 import com.fromzero.backend.projects.domain.model.aggregates.Project;
-import com.fromzero.backend.projects.domain.model.commands.AssignProjectDeveloperCommand;
-import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
-import com.fromzero.backend.projects.domain.model.commands.UpdateProjectCandidatesListCommand;
-import com.fromzero.backend.projects.domain.model.commands.UpdateProjectProgressCommand;
+import com.fromzero.backend.projects.domain.model.commands.*;
 import com.fromzero.backend.projects.domain.services.ProjectCommandService;
 import com.fromzero.backend.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
@@ -54,5 +51,17 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         project.setProgress(command.progress());
         this.projectRepository.save(project);
         return Optional.of(project);
+    }
+
+    @Override
+    public void handle(DeleteProjectCommand command) {
+        if (!projectRepository.existsById(command.projectId())) {
+            throw new IllegalArgumentException("Project does not exist");
+        }
+        try {
+            projectRepository.deleteById(command.projectId());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error while deleting project: " + e.getMessage());
+        }
     }
 }

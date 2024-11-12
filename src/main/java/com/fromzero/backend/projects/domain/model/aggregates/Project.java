@@ -1,6 +1,7 @@
 package com.fromzero.backend.projects.domain.model.aggregates;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
 import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
 import com.fromzero.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
@@ -38,7 +39,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JoinColumn(name = "developer_id")
     private Developer developer;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_candidates",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -47,8 +48,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JsonManagedReference
     private List<Developer> candidates;
 
-    //many to many relationship
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_programming_languages",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -57,7 +57,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JsonManagedReference
     private List<ProgrammingLanguage> languages;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_frameworks",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -65,6 +65,10 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     )
     @JsonManagedReference
     private List<Framework> frameworks;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Deliverable> deliverables;
 
     private String type;
 
@@ -77,21 +81,19 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     private String methodologies;
 
     public Project(CreateProjectCommand command){
-        this.name=command.name();
-        this.description=command.description();
-        this.state="En busqueda";
-        this.progress=0.0;
-        this.enterprise=command.enterprise();
-        this.developer=null;
-        this.languages=new ArrayList<>();
-        this.frameworks=new ArrayList<>();
-        this.type=command.type();
-        this.budget=command.budget();
-        this.methodologies=command.methodologies();
-
+        this.name = command.name();
+        this.description = command.description();
+        this.state = "En busqueda";
+        this.progress = 0.0;
+        this.enterprise = command.enterprise();
+        this.developer = null;
+        this.languages = new ArrayList<>();
+        this.frameworks = new ArrayList<>();
+        this.type = command.type();
+        this.budget = command.budget();
+        this.methodologies = command.methodologies();
     }
 
-    public Project(){
-
+    public Project() {
     }
 }

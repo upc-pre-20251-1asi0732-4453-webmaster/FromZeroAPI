@@ -1,5 +1,6 @@
 package com.fromzero.backend.deliverables.domain.model.aggregates;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
 import com.fromzero.backend.projects.domain.model.aggregates.Project;
 import com.fromzero.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -27,7 +28,8 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
     @Column(nullable = false)
     private String state;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "project_id")
     private Project project;
 
