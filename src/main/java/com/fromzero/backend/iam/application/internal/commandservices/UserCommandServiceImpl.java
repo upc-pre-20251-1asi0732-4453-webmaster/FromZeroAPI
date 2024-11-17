@@ -88,7 +88,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 "No phone provided.",
                 0,
                 "No specialties provided.",
-                "https://cdn-icons-png.flaticon.com/512/3237/3237472.png"
+                "https://hwqkibwyspmfwkzjlumy.supabase.co/storage/v1/object/public/profile/profile.png"
         );
         developerRepository.save(developer);
 
