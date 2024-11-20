@@ -20,7 +20,7 @@ public class EnterpriseCommandServiceImpl implements EnterpriseCommandService {
 
     @Override
     public Optional<Enterprise> handle(UpdateEnterpriseCommand command) {
-        var enterprise= enterpriseRepository.findById(command.enterpriseId())
+        var enterprise= enterpriseRepository.findEnterpriseByUser_Id(command.enterpriseId())
                 .orElseThrow(() -> new IllegalArgumentException("Enterprise with id " + command.enterpriseId() + " not found"));
         enterprise.setDescription(command.description());
         enterprise.setCountry(command.country());

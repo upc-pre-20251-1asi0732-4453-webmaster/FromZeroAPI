@@ -30,7 +30,7 @@ public class DeveloperCommandServiceImpl implements DeveloperCommandService {
 
     @Override
     public Optional<Developer> handle(UpdateDeveloperCommand command) {
-        var developer = developerRepository.findById(command.developerId())
+        var developer = developerRepository.findDeveloperByUser_Id(command.developerId())
                 .orElseThrow(() -> new IllegalArgumentException("Developer with id " + command.developerId() + " not found"));
         developer.setFirstName(command.firstName());
         developer.setLastName(command.lastName());
