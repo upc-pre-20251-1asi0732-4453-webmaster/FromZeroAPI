@@ -6,6 +6,7 @@ import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverable
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
 import com.fromzero.backend.deliverables.domain.services.DeliverableCommandService;
+import com.fromzero.backend.deliverables.domain.valueobjects.DeliverableStatus;
 import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.repositories.DeliverableRepository;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             var deliverable = this.deliverableRepository.findById(command.deliverableId());
             if(deliverable.isEmpty())throw new IllegalArgumentException();
             deliverable.get().setDeveloperMessage(command.message());
-            deliverable.get().setState("Awaiting Review");
+            deliverable.get().setState(DeliverableStatus.WAITING);
             this.deliverableRepository.save(deliverable.get());
             return deliverable;
         }catch (IllegalArgumentException e){
@@ -58,9 +59,9 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             var deliverable = this.deliverableRepository.findById(command.deliverableId());
             if(deliverable.isEmpty())throw new IllegalArgumentException();
             if (command.accepted()){
-                deliverable.get().setState("Completed");
+                deliverable.get().setState(DeliverableStatus.WAITING);
                 //System.out.println("El proyecto es: "+deliverable.get().getProject().getProgress().toString());
-            }else deliverable.get().setState("Rejected");
+            }else deliverable.get().setState(DeliverableStatus.REJECTED);
             this.deliverableRepository.save(deliverable.get());
             return deliverable;
         }catch (IllegalArgumentException e){

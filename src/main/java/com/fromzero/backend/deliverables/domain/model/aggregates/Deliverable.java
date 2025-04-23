@@ -1,6 +1,7 @@
 package com.fromzero.backend.deliverables.domain.model.aggregates;
 
 import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
+import com.fromzero.backend.deliverables.domain.valueobjects.DeliverableStatus;
 import com.fromzero.backend.projects.domain.model.aggregates.Project;
 import com.fromzero.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
@@ -25,7 +26,7 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
 
     @Setter
     @Column(nullable = false)
-    private String state;
+    private DeliverableStatus state;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -40,7 +41,7 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
         this.name=command.name();
         this.description=command.description();
         this.date= String.valueOf(command.date());
-        this.state="Pending";
+        this.state=DeliverableStatus.PENDING;
         this.developerMessage=null;
         this.project=command.project();
     }
