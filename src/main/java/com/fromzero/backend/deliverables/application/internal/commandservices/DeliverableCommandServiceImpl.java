@@ -1,5 +1,8 @@
 package com.fromzero.backend.deliverables.application.internal.commandservices;
 
+import com.fromzero.backend.deliverables.domain.exceptions.DeliverableAlreadyApprovedException;
+import com.fromzero.backend.deliverables.domain.exceptions.DeliverableWithoutUploadException;
+import com.fromzero.backend.deliverables.domain.exceptions.IllegalDeliverableStateException;
 import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
 import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
@@ -55,18 +58,36 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
 
     @Override
     public Optional<Deliverable> handle(UpdateDeliverableStatusCommand command) {
-        try {
-            var deliverable = this.deliverableRepository.findById(command.deliverableId());
-            if(deliverable.isEmpty())throw new IllegalArgumentException();
-            if (command.accepted()){
-                deliverable.get().setState(DeliverableStatus.WAITING);
-                //System.out.println("El proyecto es: "+deliverable.get().getProject().getProgress().toString());
-            }else deliverable.get().setState(DeliverableStatus.REJECTED);
-            this.deliverableRepository.save(deliverable.get());
-            return deliverable;
-        }catch (IllegalArgumentException e){
-            return Optional.empty();
+        var deliverable = this.deliverableRepository.findById(command.deliverableId());
+        if(deliverable.isEmpty()){
+            throw new IllegalArgumentException();
         }
+
+        //if there's no files/developerMessage from the developer
+        if(deliverable.get().getDeveloperMessage()==null){
+            throw new DeliverableWithoutUploadException("There's no upload from the developer");
+        }
+
+
+        //if the deliverable was approved before
+        if (deliverable.get().getState() == DeliverableStatus.APPROVED){
+            throw new DeliverableAlreadyApprovedException("Deliverable is already approved");
+        }
+
+
+        //if the status is not WAITING
+        if (deliverable.get().getState() != DeliverableStatus.WAITING) {
+            throw new IllegalDeliverableStateException("The state must be WAITING");
+        }
+
+        if (command.accepted()){
+            deliverable.get().setState(DeliverableStatus.APPROVED);
+            //System.out.println("El proyecto es: "+deliverable.get().getProject().getProgress().toString());
+        }else deliverable.get().setState(DeliverableStatus.REJECTED);
+        this.deliverableRepository.save(deliverable.get());
+        return deliverable;
+
+
 
     }
     @Override
