@@ -14,6 +14,7 @@ import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.reposito
 import com.fromzero.backend.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,9 +34,16 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         var deliverable = new Deliverable(command, project);
         Integer maxOrderValue=deliverableRepository.findMaxOrderNumberByProject(command.projectId());
 
-        //to assign the order number to a new deliverable
         int newOrderValue = 1;
-        newOrderValue=maxOrderValue+1;
+
+        //to assign the order number to a new deliverable
+        if(maxOrderValue==null){
+            newOrderValue = 1;
+        }else {
+            newOrderValue=maxOrderValue+1;
+        }
+
+
 
         deliverable.setOrderNumber(newOrderValue);
 
@@ -138,7 +146,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             Deliverable deliverable = deliverableOptional.get();
             deliverable.setName(command.name());
             deliverable.setDescription(command.description());
-            deliverable.setDate(String.valueOf(command.date()));
+            deliverable.setDeadline(LocalDateTime.parse(command.date()));
             deliverableRepository.save(deliverable);
             return Optional.of(deliverable);
         }

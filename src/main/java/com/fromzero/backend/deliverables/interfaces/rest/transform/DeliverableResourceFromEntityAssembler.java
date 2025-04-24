@@ -9,10 +9,11 @@ public class DeliverableResourceFromEntityAssembler {
                 deliverable.getId(),
                 deliverable.getName(),
                 deliverable.getDescription(),
-                deliverable.getDate(),
+                deliverable.getDeadline(),
                 deliverable.getState(),
                 deliverable.getDeveloperMessage(),
-                deliverable.getProject().getId()
+                deliverable.getProject().getId(),
+                deliverable.getOrderNumber()
         );
     }
 }
