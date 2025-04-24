@@ -5,10 +5,7 @@ import com.fromzero.backend.deliverables.domain.exceptions.DeliverableWithoutUpl
 import com.fromzero.backend.deliverables.domain.exceptions.IllegalDeliverableDeadlineDateException;
 import com.fromzero.backend.deliverables.domain.exceptions.IllegalDeliverableStateException;
 import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
-import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
+import com.fromzero.backend.deliverables.domain.model.commands.*;
 import com.fromzero.backend.deliverables.domain.services.DeliverableCommandService;
 import com.fromzero.backend.deliverables.domain.valueobjects.DeliverableStatus;
 import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.repositories.DeliverableRepository;
@@ -81,7 +78,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
     }
 
     @Override
-    public Optional<Deliverable> handle(UpdateDeveloperMessageCommand command) {
+    public Optional<Deliverable> handle(UpdateDeveloperDescriptionCommand command) {
         var deliverable = this.deliverableRepository.findById(command.deliverableId());
 
 
@@ -95,7 +92,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             var previousOrderNumber = deliverableRepository.findMaxOrderNumberByProject(command.project())-1;
             var previousDeliverable = deliverableRepository.findByProjectIdAndOrderNumber(command.project(), previousOrderNumber);
 
-            if(previousDeliverable.get().getState()!= DeliverableStatus.APPROVED || previousDeliverable.get().getDeveloperMessage()==null){
+            if(previousDeliverable.get().getState()!= DeliverableStatus.APPROVED || previousDeliverable.get().getDeveloperDescription()==null){
                 throw new IllegalArgumentException("You can't upload this deliverable because the previous one is not approved or doesn't exist");
             }
         }
@@ -106,8 +103,8 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         }
 
         //if the upload is empty
-        if(command.message()== null){
-            throw new DeliverableWithoutUploadException("You can't upload a new deliverable. Deliverable does not have a developer message");
+        if(command.message()== null || command.message().isBlank()){
+            throw new DeliverableWithoutUploadException("Deliverable does not have a developer message");
         }
 
         //if the deadline is before the current date
@@ -116,9 +113,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         }
 
 
-
-
-        deliverable.get().setDeveloperMessage(command.message());
+        deliverable.get().setDeveloperDescription(command.message());
         deliverable.get().setState(DeliverableStatus.WAITING);
         this.deliverableRepository.save(deliverable.get());
         return deliverable;
@@ -134,7 +129,7 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         }
 
         //if there's no files/developerMessage from the developer
-        if(deliverable.get().getDeveloperMessage()==null){
+        if(deliverable.get().getDeveloperDescription()==null){
             throw new DeliverableWithoutUploadException("There's no upload from the developer");
         }
 
@@ -168,10 +163,50 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             deliverable.setName(command.name());
             deliverable.setDescription(command.description());
             deliverable.setDeadline(LocalDateTime.parse(command.date()));
+
+            //to prevent the user from creating a deliverable without a title or description
+            if(deliverable.getName()==null || deliverable.getName().isBlank() || deliverable.getDescription()==null || deliverable.getDescription().isBlank()){
+                throw new IllegalArgumentException("The deliverable name and description are required");
+            }
+
             deliverableRepository.save(deliverable);
             return Optional.of(deliverable);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void handle(DeleteDeliverableCommand command) {
+        var deliverable = this.deliverableRepository.findById(command.deliverableId());
+
+        //to prevent the user from deleting a deliverable that doesn't exist
+        if(deliverable.isEmpty()){
+            throw new IllegalArgumentException("The deliverable with the id %s doesn't exist".formatted(command.deliverableId()));
+        }
+
+        //to prevent the user from deleting an approved deliverable
+        if(deliverable.get().getState() == DeliverableStatus.APPROVED){
+            throw new IllegalArgumentException("You can't delete an approved deliverable");
+        }
+
+        //to prevent the user from deleting a deliverable that has an upload
+        if(deliverable.get().getDeveloperDescription()!=null){
+            throw new IllegalArgumentException("You can't delete a deliverable with an upload");
+        }
+
+        deliverableRepository.delete(deliverable.get());
+
+        //to update the order number of the deliverables after deleting one
+        List<Deliverable> deliverables = deliverableRepository.findAllByProject(
+                projectRepository.findById(command.projectId())
+                        .orElseThrow(() -> new IllegalArgumentException("The project doesn't exist"))
+        );
+
+        for (int i = 0; i < deliverables.size(); i++) {
+            Deliverable actualDeliverable = deliverables.get(i);
+            actualDeliverable.setOrderNumber(i + 1);
+            deliverableRepository.save(actualDeliverable);
+        }
     }
 
 }
