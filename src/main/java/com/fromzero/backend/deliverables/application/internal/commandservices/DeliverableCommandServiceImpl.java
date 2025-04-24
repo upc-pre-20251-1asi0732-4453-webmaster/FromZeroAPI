@@ -2,6 +2,7 @@ package com.fromzero.backend.deliverables.application.internal.commandservices;
 
 import com.fromzero.backend.deliverables.domain.exceptions.DeliverableAlreadyApprovedException;
 import com.fromzero.backend.deliverables.domain.exceptions.DeliverableWithoutUploadException;
+import com.fromzero.backend.deliverables.domain.exceptions.IllegalDeliverableDeadlineDateException;
 import com.fromzero.backend.deliverables.domain.exceptions.IllegalDeliverableStateException;
 import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
 import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverableCommand;
@@ -32,23 +33,39 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
         var project = this.projectRepository.findById(command.projectId())
                 .orElseThrow(() -> new IllegalArgumentException("The project doesn't exist")); //without the .orElseThrow, it doesn't extract the projectId from the command
         var deliverable = new Deliverable(command, project);
-        Integer maxOrderValue=deliverableRepository.findMaxOrderNumberByProject(command.projectId());
 
-        int newOrderValue = 1;
 
         //to assign the order number to a new deliverable
+        Integer maxOrderValue=deliverableRepository.findMaxOrderNumberByProject(command.projectId());
+        int newOrderValue = 1;
+
         if(maxOrderValue==null){
             newOrderValue = 1;
         }else {
             newOrderValue=maxOrderValue+1;
+
+            //to prevent the user from creating a deliverable with a deadline before the last one
+            var lastDeliverable = this.deliverableRepository.findByProjectIdAndOrderNumber(command.projectId(), maxOrderValue);
+
+            if(lastDeliverable.get().getDeadline().isAfter(deliverable.getDeadline())){
+                throw new IllegalDeliverableDeadlineDateException("The deadline date is before the last deliverable");
+            }
         }
-
-
-
         deliverable.setOrderNumber(newOrderValue);
 
-        this.deliverableRepository.save(deliverable);
 
+
+        //to prevent the user from creating a deliverable with a deadline before the current date
+        if(deliverable.getDeadline().isBefore(LocalDateTime.now())){
+            throw new IllegalDeliverableDeadlineDateException("The deadline date is before the current date");
+        }
+
+        //to prevent the user from creating a deliverable without a title or description
+        if(deliverable.getName()==null || deliverable.getName().isBlank() || deliverable.getDescription()==null || deliverable.getDescription().isBlank()){
+            throw new IllegalArgumentException("The deliverable name and description are required");
+        }
+
+        this.deliverableRepository.save(deliverable);
         return Optional.of(deliverable);
     }
 
@@ -93,6 +110,10 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             throw new DeliverableWithoutUploadException("You can't upload a new deliverable. Deliverable does not have a developer message");
         }
 
+        //if the deadline is before the current date
+        if(deliverable.get().getDeadline().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("The deadline is before the current date");
+        }
 
 
 

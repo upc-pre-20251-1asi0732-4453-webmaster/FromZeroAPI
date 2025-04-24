@@ -6,6 +6,6 @@ import com.fromzero.backend.deliverables.interfaces.rest.resources.CreateDeliver
 
 public class CreateDeliverableCommandFromResourceAssembler {
     public static CreateDeliverableCommand toCommandFromResource(CreateDeliverableResource resource){
-        return new CreateDeliverableCommand(resource.name(),resource.description(),resource.date(),resource.projectId(), resource.orderNumber());
+        return new CreateDeliverableCommand(resource.name(),resource.description(),resource.date(),resource.projectId(),1);
     }
 }

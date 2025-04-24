@@ -12,8 +12,7 @@ public class DeliverableResourceFromEntityAssembler {
                 deliverable.getDeadline(),
                 deliverable.getState(),
                 deliverable.getDeveloperMessage(),
-                deliverable.getProject().getId(),
-                deliverable.getOrderNumber()
+                deliverable.getProject().getId()
         );
     }
 }

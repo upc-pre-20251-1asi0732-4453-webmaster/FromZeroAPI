@@ -52,7 +52,7 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
         this.state=DeliverableStatus.PENDING;
         this.developerMessage=null;
         this.project = project;
-        this.orderNumber=command.orderNumber();
+        this.orderNumber=1;
     }
 
     public Deliverable() {
