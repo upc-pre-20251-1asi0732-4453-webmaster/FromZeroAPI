@@ -16,6 +16,7 @@ import com.fromzero.backend.deliverables.interfaces.rest.resources.DeliverableRe
 import com.fromzero.backend.deliverables.interfaces.rest.resources.UpdateDeliverableResource;
 import com.fromzero.backend.deliverables.interfaces.rest.transform.CreateDeliverableCommandFromResourceAssembler;
 import com.fromzero.backend.deliverables.interfaces.rest.transform.DeliverableResourceFromEntityAssembler;
+import com.fromzero.backend.projects.domain.model.aggregates.Project;
 import com.fromzero.backend.projects.interfaces.acl.ProjectContextFacade;
 import com.fromzero.backend.user.interfaces.acl.ProfileContextFacade;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,7 +56,7 @@ public class DeliverableController {
         if (project == null) {
             return ResponseEntity.badRequest().build();
         }
-        var createDeliverableCommand = CreateDeliverableCommandFromResourceAssembler.toCommandFromResource(resource,project);
+        var createDeliverableCommand = CreateDeliverableCommandFromResourceAssembler.toCommandFromResource(resource);
         var deliverable = this.deliverableCommandService.handle(createDeliverableCommand);
         if (deliverable.isEmpty()) {
             return ResponseEntity.internalServerError().build();
@@ -97,10 +98,10 @@ public class DeliverableController {
     }
 
     @Operation(summary = "Send Deliverable")
-    @PatchMapping(value = "/{deliverableId}/send")
-    public ResponseEntity<DeliverableResource> sendDeliverable(@PathVariable Long deliverableId,
+    @PatchMapping(value = "/Projects/{projectId}/{deliverableId}/send")
+    public ResponseEntity<DeliverableResource> sendDeliverable(@PathVariable Long deliverableId, @PathVariable Long projectId,
                                              @RequestBody String developerMessage){
-        var updateDeveloperMessageCommand = new UpdateDeveloperMessageCommand(deliverableId,developerMessage);
+        var updateDeveloperMessageCommand = new UpdateDeveloperMessageCommand(deliverableId,developerMessage, projectId);
         var deliverable = this.deliverableCommandService.handle(updateDeveloperMessageCommand);
         if (deliverable.isEmpty())return ResponseEntity.badRequest().build();
         var deliverableResource = DeliverableResourceFromEntityAssembler.toResourceFromEntity(deliverable.get());

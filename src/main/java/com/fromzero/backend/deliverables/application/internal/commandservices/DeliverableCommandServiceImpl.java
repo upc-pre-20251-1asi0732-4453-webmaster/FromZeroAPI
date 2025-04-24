@@ -11,6 +11,7 @@ import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMe
 import com.fromzero.backend.deliverables.domain.services.DeliverableCommandService;
 import com.fromzero.backend.deliverables.domain.valueobjects.DeliverableStatus;
 import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.repositories.DeliverableRepository;
+import com.fromzero.backend.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +20,25 @@ import java.util.Optional;
 @Service
 public class DeliverableCommandServiceImpl implements DeliverableCommandService {
     private final DeliverableRepository deliverableRepository;
-    public DeliverableCommandServiceImpl(DeliverableRepository deliverableRepository) {
+    private final ProjectRepository projectRepository;
+    public DeliverableCommandServiceImpl(DeliverableRepository deliverableRepository, ProjectRepository projectRepository) {
         this.deliverableRepository = deliverableRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
     public Optional<Deliverable> handle(CreateDeliverableCommand command) {
-        var deliverable = new Deliverable(command);
+        var project = this.projectRepository.findById(command.projectId())
+                .orElseThrow(() -> new IllegalArgumentException("The project doesn't exist")); //without the .orElseThrow, it doesn't extract the projectId from the command
+        var deliverable = new Deliverable(command, project);
+        Integer maxOrderValue=deliverableRepository.findMaxOrderNumberByProject(command.projectId());
+
+        //to assign the order number to a new deliverable
+        int newOrderValue = 1;
+        newOrderValue=maxOrderValue+1;
+
+        deliverable.setOrderNumber(newOrderValue);
+
         this.deliverableRepository.save(deliverable);
 
         return Optional.of(deliverable);
@@ -44,16 +57,44 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
 
     @Override
     public Optional<Deliverable> handle(UpdateDeveloperMessageCommand command) {
-        try {
-            var deliverable = this.deliverableRepository.findById(command.deliverableId());
-            if(deliverable.isEmpty())throw new IllegalArgumentException();
-            deliverable.get().setDeveloperMessage(command.message());
-            deliverable.get().setState(DeliverableStatus.WAITING);
-            this.deliverableRepository.save(deliverable.get());
-            return deliverable;
-        }catch (IllegalArgumentException e){
-            return Optional.empty();
+        var deliverable = this.deliverableRepository.findById(command.deliverableId());
+
+
+        if(deliverable.isEmpty()){
+            throw new IllegalArgumentException();
         }
+        var currentDeliverable = deliverable.get();
+
+        //if the deliverable before this one is not approved
+        if (currentDeliverable.getOrderNumber()>1){
+            var previousOrderNumber = deliverableRepository.findMaxOrderNumberByProject(command.project())-1;
+            var previousDeliverable = deliverableRepository.findByProjectIdAndOrderNumber(command.project(), previousOrderNumber);
+
+            if(previousDeliverable.get().getState()!= DeliverableStatus.APPROVED || previousDeliverable.get().getDeveloperMessage()==null){
+                throw new IllegalArgumentException("You can't upload this deliverable because the previous one is not approved or doesn't exist");
+            }
+        }
+
+        // if the deliverable was approved already
+        if(deliverable.get().getState()==DeliverableStatus.APPROVED){
+            throw new DeliverableAlreadyApprovedException("You can't upload a new deliverable. Deliverable already approved");
+        }
+
+        //if the upload is empty
+        if(command.message()== null){
+            throw new DeliverableWithoutUploadException("You can't upload a new deliverable. Deliverable does not have a developer message");
+        }
+
+
+
+
+
+        deliverable.get().setDeveloperMessage(command.message());
+        deliverable.get().setState(DeliverableStatus.WAITING);
+        this.deliverableRepository.save(deliverable.get());
+        return deliverable;
+
+
     }
 
     @Override

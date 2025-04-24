@@ -8,8 +8,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Entity
 @Setter
 @Getter
@@ -29,7 +27,7 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
     private DeliverableStatus state;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @Setter
@@ -37,13 +35,21 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
     @Column(columnDefinition = "TEXT")
     private String developerMessage;
 
-    public Deliverable(CreateDeliverableCommand command) {
+
+    @Setter
+    @Getter
+    @Column(nullable = false)
+    private int orderNumber;
+
+
+    public Deliverable(CreateDeliverableCommand command, Project project) {
         this.name=command.name();
         this.description=command.description();
         this.date= String.valueOf(command.date());
         this.state=DeliverableStatus.PENDING;
         this.developerMessage=null;
-        this.project=command.project();
+        this.project = project;
+        this.orderNumber=0;
     }
 
     public Deliverable() {
