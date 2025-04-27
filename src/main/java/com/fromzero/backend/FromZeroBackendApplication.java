@@ -28,7 +28,7 @@ public class FromZeroBackendApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 //		frameworkRepository.save(new Framework("Spring Boot"));
-//		frameworkRepository.save(new Framework("Vue..js"));
+//		frameworkRepository.save(new Framework("Vue.js"));
 //		frameworkRepository.save(new Framework("Angular"));
 //		frameworkRepository.save(new Framework("Nest.js"));
 //		frameworkRepository.save(new Framework("Net Core"));

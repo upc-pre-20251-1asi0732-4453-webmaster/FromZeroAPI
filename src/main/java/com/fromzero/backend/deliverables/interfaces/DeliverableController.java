@@ -5,7 +5,7 @@ package com.fromzero.backend.deliverables.interfaces;
 
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableCommand;
 import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeliverableStatusCommand;
-import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperMessageCommand;
+import com.fromzero.backend.deliverables.domain.model.commands.UpdateDeveloperDescriptionCommand;
 import com.fromzero.backend.deliverables.domain.model.queries.GetAllDeliverablesByProjectIdQuery;
 import com.fromzero.backend.deliverables.domain.model.queries.GetCompletedDeliverablesQuery;
 import com.fromzero.backend.deliverables.domain.model.queries.GetDeliverableByIdQuery;
@@ -55,7 +55,7 @@ public class DeliverableController {
         if (project == null) {
             return ResponseEntity.badRequest().build();
         }
-        var createDeliverableCommand = CreateDeliverableCommandFromResourceAssembler.toCommandFromResource(resource,project);
+        var createDeliverableCommand = CreateDeliverableCommandFromResourceAssembler.toCommandFromResource(resource);
         var deliverable = this.deliverableCommandService.handle(createDeliverableCommand);
         if (deliverable.isEmpty()) {
             return ResponseEntity.internalServerError().build();
@@ -73,7 +73,7 @@ public class DeliverableController {
         return new  ResponseEntity<>(deliverableResource, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/project/{projectId}")
+    @GetMapping(value = "/project/{projectId}/deliverables")
     @Operation(summary = "Get All Deliverables By Project Id")
     public ResponseEntity<List<DeliverableResource>> getAllDeliverablesByProjectId(@PathVariable Long projectId){
         var project = this.projectContextFacade.getProjectById(projectId);
@@ -96,11 +96,11 @@ public class DeliverableController {
         return ResponseEntity.ok(deliverableResource);
     }
 
-    @Operation(summary = "Send Deliverable")
-    @PatchMapping(value = "/{deliverableId}/send")
-    public ResponseEntity<DeliverableResource> sendDeliverable(@PathVariable Long deliverableId,
+    @Operation(summary = "Upload Deliverable")
+    @PatchMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}/upload")
+    public ResponseEntity<DeliverableResource> sendDeliverable(@PathVariable Long deliverableId, @PathVariable Long projectId,
                                              @RequestBody String developerMessage){
-        var updateDeveloperMessageCommand = new UpdateDeveloperMessageCommand(deliverableId,developerMessage);
+        var updateDeveloperMessageCommand = new UpdateDeveloperDescriptionCommand(deliverableId,developerMessage, projectId);
         var deliverable = this.deliverableCommandService.handle(updateDeveloperMessageCommand);
         if (deliverable.isEmpty())return ResponseEntity.badRequest().build();
         var deliverableResource = DeliverableResourceFromEntityAssembler.toResourceFromEntity(deliverable.get());
@@ -108,9 +108,9 @@ public class DeliverableController {
     }
 
     @Operation(summary = "Review Deliverable")
-    @PatchMapping(value = "/{deliverableId}/review")
+    @PatchMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}/review")
     public ResponseEntity<DeliverableResource> reviewDeliverable(@PathVariable Long deliverableId,
-                                                                 @RequestBody Boolean accepted){
+                                                                 @RequestBody Boolean accepted, @PathVariable String projectId){
         var updateDeliverableStatusCommand = new UpdateDeliverableStatusCommand(deliverableId,accepted);
         var deliverable = this.deliverableCommandService.handle(updateDeliverableStatusCommand);
         if (deliverable.isEmpty())return ResponseEntity.badRequest().build();
@@ -133,9 +133,9 @@ public class DeliverableController {
         return ResponseEntity.ok(deliverableResource);
     }
 
-
-    @PutMapping(value = "/{deliverableId}")
-    public ResponseEntity<DeliverableResource> updateDeliverable(@PathVariable Long deliverableId, @RequestBody UpdateDeliverableResource resource) {
+    @Operation(summary = "Edit Deliverable")
+    @PutMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}")
+    public ResponseEntity<DeliverableResource> updateDeliverable(@PathVariable Long deliverableId, @RequestBody UpdateDeliverableResource resource, @PathVariable String projectId) {
         UpdateDeliverableCommand command = new UpdateDeliverableCommand(deliverableId, resource.name(), resource.description(), resource.date());
         var updatedDeliverable = deliverableCommandService.handle(command);
         if (updatedDeliverable.isEmpty()) {
@@ -144,4 +144,13 @@ public class DeliverableController {
         var deliverableResource = DeliverableResourceFromEntityAssembler.toResourceFromEntity(updatedDeliverable.get());
         return ResponseEntity.ok(deliverableResource);
     }
+
+    @Operation(summary = "Delete Deliverable")
+    @DeleteMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}/")
+    public ResponseEntity<Void> deleteDeliverable(@PathVariable Long projectId, @PathVariable Long deliverableId) {
+        var deleteDeliverableCommand = new com.fromzero.backend.deliverables.domain.model.commands.DeleteDeliverableCommand(projectId,deliverableId);
+        this.deliverableCommandService.handle(deleteDeliverableCommand);
+        return ResponseEntity.noContent().build();
+    }
+
 }
