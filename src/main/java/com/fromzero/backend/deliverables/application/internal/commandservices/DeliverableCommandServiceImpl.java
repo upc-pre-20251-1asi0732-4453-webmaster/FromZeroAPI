@@ -9,6 +9,8 @@ import com.fromzero.backend.deliverables.domain.model.commands.*;
 import com.fromzero.backend.deliverables.domain.services.DeliverableCommandService;
 import com.fromzero.backend.deliverables.domain.valueobjects.DeliverableStatus;
 import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.repositories.DeliverableRepository;
+import com.fromzero.backend.projects.application.internal.commandservices.ProjectCommandServiceImpl;
+import com.fromzero.backend.projects.domain.model.commands.UpdateProjectProgressCommand;
 import com.fromzero.backend.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -133,6 +135,8 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             throw new IllegalArgumentException();
         }
 
+
+
         //if there's no files/developerMessage from the developer
         if(deliverable.get().getDeveloperDescription()==null){
             throw new DeliverableWithoutUploadException("There's no upload from the developer");
@@ -152,6 +156,9 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
 
         if (command.accepted()){
             deliverable.get().setState(DeliverableStatus.APPROVED);
+            var project = deliverable.get().getProject();
+            var updateCommand = new UpdateProjectProgressCommand(project, project.getProgress());
+            new ProjectCommandServiceImpl(projectRepository, deliverableRepository).handle(updateCommand);
             //System.out.println("El proyecto es: "+deliverable.get().getProject().getProgress().toString());
         }else deliverable.get().setState(DeliverableStatus.REJECTED);
         this.deliverableRepository.save(deliverable.get());

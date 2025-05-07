@@ -27,6 +27,14 @@ public class ProjectResourceFromEntityAssembler {
                     entity.getBudget(),entity.getMethodologies());
         }
 
-        throw new IllegalArgumentException("El estado no es valido");
+        if (entity.getState() == ProjectState.COMPLETED) {
+            return new ProjectResource(entity.getId(), entity.getName(), entity.getDescription(),
+                    entity.getState().name(), entity.getProgress(), entity.getEnterprise().getId(),
+                    entity.getDeveloper().getId(), entity.getCandidates(),
+                    entity.getLanguages(), entity.getFrameworks(), entity.getType().name(),
+                    entity.getBudget(), entity.getMethodologies());
+        }
+
+        throw new IllegalArgumentException("The state of the project is not valid");
     }
 }

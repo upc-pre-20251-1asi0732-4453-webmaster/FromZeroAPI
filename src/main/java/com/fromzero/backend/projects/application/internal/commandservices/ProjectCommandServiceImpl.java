@@ -72,12 +72,10 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         boolean allDeliverablesApproved = deliverableRepository.findAllByProject(project)
                 .stream()
                 .allMatch(deliverable -> {
-                    System.out.println("Deliverable ID: " + deliverable.getId() + ", State: " + deliverable.getState());
                     return deliverable.getState() == DeliverableStatus.APPROVED;
                 });
 
         if (allDeliverablesApproved) {
-            System.out.println("All deliverables approved. Updating project state to COMPLETED.");
             project.setState(ProjectState.COMPLETED);
         }
 
