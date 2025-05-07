@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Entity
 @Setter
@@ -53,10 +55,11 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
         this.state=DeliverableStatus.PENDING;
         this.developerDescription =null;
         this.project = project;
-        this.orderNumber=1;
+        this.orderNumber=command.orderNumber();
     }
 
     public Deliverable() {
 
     }
+
 }

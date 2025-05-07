@@ -89,11 +89,16 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
 
         //if the deliverable before this one is not approved
         if (currentDeliverable.getOrderNumber()>1){
-            var previousOrderNumber = deliverableRepository.findMaxOrderNumberByProject(command.project())-1;
-            var previousDeliverable = deliverableRepository.findByProjectIdAndOrderNumber(command.project(), previousOrderNumber);
+            var previousOrderNumber = currentDeliverable.getOrderNumber() - 1;
+            var previousDeliverable = deliverableRepository.findByProjectIdAndOrderNumber(
+                    currentDeliverable.getProject().getId(), previousOrderNumber);
 
-            if(previousDeliverable.get().getState()!= DeliverableStatus.APPROVED || previousDeliverable.get().getDeveloperDescription()==null){
-                throw new IllegalArgumentException("You can't upload this deliverable because the previous one is not approved or doesn't exist");
+            if (previousDeliverable.isEmpty()) {
+                throw new IllegalArgumentException("You can't upload this deliverable because the previous one doesn't exist");
+            }
+
+            if (previousDeliverable.get().getState() != DeliverableStatus.APPROVED) {
+                throw new IllegalArgumentException("You can't upload this deliverable because the previous one is not approved");
             }
         }
 

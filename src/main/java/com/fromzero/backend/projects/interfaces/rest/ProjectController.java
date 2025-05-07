@@ -99,8 +99,6 @@ public class ProjectController {
         if (project.isEmpty()) return ResponseEntity.badRequest().build();
         var createProjectResource = CreateProjectResourceFromEntityAssembler.toResourceFromEntity(project.get());
 
-        this.deliverableContextFacade.createDeliverables(project.get());
-
         return new ResponseEntity<>(createProjectResource, HttpStatus.CREATED);
     }
 
@@ -115,20 +113,20 @@ public class ProjectController {
         return ResponseEntity.ok(projectsResources);
     }
 
-    @Operation(summary = "Get All Project By State")
-    @GetMapping(value = "/by-state/{state}")
-    public ResponseEntity<List<ProjectResource>> getAllProjectsByState(@PathVariable String state) {
-        try {
-            var getAllProjectsByStateQuery = new GetAllProjectsByStateQuery(state);
-            var projects = this.projectQueryService.handle(getAllProjectsByStateQuery);
-            var projectsResources = projects.stream()
-                    .map(ProjectResourceFromEntityAssembler::toResourceFromEntity)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(projectsResources);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+//    @Operation(summary = "Get All Project By State")
+//    @GetMapping(value = "/by-state/{state}")
+//    public ResponseEntity<List<ProjectResource>> getAllProjectsByState(@PathVariable String state) {
+//        try {
+//            var getAllProjectsByStateQuery = new GetAllProjectsByStateQuery(state);
+//            var projects = this.projectQueryService.handle(getAllProjectsByStateQuery);
+//            var projectsResources = projects.stream()
+//                    .map(ProjectResourceFromEntityAssembler::toResourceFromEntity)
+//                    .collect(Collectors.toList());
+//            return ResponseEntity.ok(projectsResources);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
 
     @Operation(summary = "Get Project By Id")
     @GetMapping(value = "/{id}")
