@@ -19,6 +19,6 @@ public interface DeliverableRepository extends JpaRepository<Deliverable, Long> 
 
     Optional<Deliverable> findByProjectIdAndOrderNumber(Long projectId, int orderNumber);
 
-
+    void deleteAllByProjectId(Long projectId);
 
 }

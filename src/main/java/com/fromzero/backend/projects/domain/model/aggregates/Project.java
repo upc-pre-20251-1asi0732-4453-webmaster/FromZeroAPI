@@ -40,7 +40,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JoinColumn(name = "developer_id")
     private Developer developer;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_candidates",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -50,7 +50,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     private List<Developer> candidates;
 
     //many to many relationship
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_programming_languages",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -59,7 +59,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JsonManagedReference
     private List<ProgrammingLanguage> languages;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_frameworks",
             joinColumns = @JoinColumn(name = "project_id"),

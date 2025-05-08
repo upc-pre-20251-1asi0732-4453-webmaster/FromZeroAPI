@@ -15,4 +15,5 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
     List<Project> findAllByState(ProjectState state);
     List<Project> findAllByDeveloper(Developer developer);
     List<Project> findAllByEnterprise(Enterprise enterprise);
+
 }

@@ -5,6 +5,7 @@ import com.fromzero.backend.projects.domain.model.aggregates.Framework;
 import com.fromzero.backend.projects.domain.model.aggregates.ProgrammingLanguage;
 import com.fromzero.backend.projects.domain.model.commands.AssignProjectDeveloperCommand;
 import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
+import com.fromzero.backend.projects.domain.model.commands.DeleteProjectCommand;
 import com.fromzero.backend.projects.domain.model.commands.UpdateProjectCandidatesListCommand;
 import com.fromzero.backend.projects.domain.model.queries.*;
 import com.fromzero.backend.projects.domain.services.FrameworksQueryService;
@@ -123,7 +124,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectResource);
     }
 
-    @Operation(summary = "Add Candidate to Project")
+    @Operation(summary = "Add Candidate to the list of candidates of a Project")
     @PatchMapping(value = "/{projectId}/add-candidate")
     public ResponseEntity<UpdateProjectCandidatesListResource>
     updateProjectCandidatesList(@PathVariable Long projectId,
@@ -185,6 +186,17 @@ public class ProjectController {
                 .map(ProjectResourceFromEntityAssembler::toResourceFromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(projectResources);
+    }
+
+    @Operation(summary = "Delete a project by Id")
+    @DeleteMapping(value = "/{projectId}")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
+        var getProjectByIdQuery = new GetProjectByIdQuery(projectId);
+        var project = this.projectQueryService.handle(getProjectByIdQuery);
+        if (project.isEmpty()) return ResponseEntity.badRequest().build();
+        var deleteProjectCommand = new DeleteProjectCommand(project.get().getId());
+        this.projectCommandService.handle(deleteProjectCommand);
+        return ResponseEntity.noContent().build();
     }
 
 }

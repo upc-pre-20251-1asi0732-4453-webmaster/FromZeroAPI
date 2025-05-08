@@ -5,15 +5,13 @@ import com.fromzero.backend.deliverables.domain.model.commands.CreateDeliverable
 import com.fromzero.backend.deliverables.domain.valueobjects.DeliverableStatus;
 import com.fromzero.backend.deliverables.infrastructure.persistence.jpa.repositories.DeliverableRepository;
 import com.fromzero.backend.projects.domain.model.aggregates.Project;
-import com.fromzero.backend.projects.domain.model.commands.AssignProjectDeveloperCommand;
-import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
-import com.fromzero.backend.projects.domain.model.commands.UpdateProjectCandidatesListCommand;
-import com.fromzero.backend.projects.domain.model.commands.UpdateProjectProgressCommand;
+import com.fromzero.backend.projects.domain.model.commands.*;
 import com.fromzero.backend.projects.domain.services.ProjectCommandService;
 import com.fromzero.backend.projects.domain.valueobjects.ProjectState;
 import com.fromzero.backend.projects.domain.valueobjects.ProjectType;
 import com.fromzero.backend.projects.infrastructure.persistence.jpa.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,6 +80,30 @@ public class ProjectCommandServiceImpl implements ProjectCommandService {
         this.projectRepository.save(project);
         return Optional.of(project);
     }
+
+    @Override
+    @Transactional
+    public void handle(DeleteProjectCommand command) {
+        var project = projectRepository.findById(command.projectId())
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
+
+        //if the project's state is COMPLETED or IN PROCESS
+        if (project.getState() == ProjectState.COMPLETED || project.getState() == ProjectState.IN_PROCESS) {
+            throw new IllegalArgumentException("Cannot delete a completed or an in process project");
+        }
+
+        //if the project have a developer working on it
+        if(project.getDeveloper() != null) {
+            throw new IllegalArgumentException("Cannot delete a project with an assigned developer");
+        }
+
+
+        deliverableRepository.deleteAllByProjectId(project.getId());
+
+        this.projectRepository.delete(project);
+    }
+
 
     private List<Deliverable> createDefaultDeliverables(ProjectType projectType, Project project) {
         List<Deliverable> deliverables = new ArrayList<>();
