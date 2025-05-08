@@ -8,6 +8,7 @@ import com.fromzero.backend.projects.domain.model.queries.GetAllProjectsQuery;
 import com.fromzero.backend.projects.domain.model.queries.GetProjectByIdQuery;
 import com.fromzero.backend.projects.domain.services.ProjectCommandService;
 import com.fromzero.backend.projects.domain.services.ProjectQueryService;
+import com.fromzero.backend.projects.domain.valueobjects.ProjectState;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class ProjectContextFacade {
         return this.projectQueryService.handle(getAllProjectsQuery);
     }
 
-    public List<Project> getAllProjectsByState(String state){
+    public List<Project> getAllProjectsByState(ProjectState state){
         try{
             var getAllProjectsByStateQuery = new GetAllProjectsByStateQuery(state);
             return this.projectQueryService.handle(getAllProjectsByStateQuery);
