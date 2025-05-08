@@ -2,6 +2,8 @@ package com.fromzero.backend.projects.domain.model.aggregates;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
+import com.fromzero.backend.projects.domain.valueobjects.ProjectState;
+import com.fromzero.backend.projects.domain.valueobjects.ProjectType;
 import com.fromzero.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
 import com.fromzero.backend.user.domain.model.aggregates.Enterprise;
@@ -24,7 +26,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     private String description;
 
     @Setter
-    private String state;
+    private ProjectState state;
 
     @Setter
     private Double progress;
@@ -38,7 +40,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JoinColumn(name = "developer_id")
     private Developer developer;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_candidates",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -48,7 +50,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     private List<Developer> candidates;
 
     //many to many relationship
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_programming_languages",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -57,7 +59,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JsonManagedReference
     private List<ProgrammingLanguage> languages;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_frameworks",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -66,7 +68,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     @JsonManagedReference
     private List<Framework> frameworks;
 
-    private String type;
+    private ProjectType type;
 
     @Lob
     @Column(columnDefinition = "TEXT")
@@ -79,7 +81,7 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
     public Project(CreateProjectCommand command){
         this.name=command.name();
         this.description=command.description();
-        this.state="En busqueda";
+        this.state=ProjectState.LOOKING_FOR_DEVELOPERS;
         this.progress=0.0;
         this.enterprise=command.enterprise();
         this.developer=null;
