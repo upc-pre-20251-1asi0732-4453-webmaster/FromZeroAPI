@@ -4,6 +4,7 @@ package com.fromzero.backend.projects.interfaces.rest.resources;
 
 import com.fromzero.backend.projects.domain.model.aggregates.Framework;
 import com.fromzero.backend.projects.domain.model.aggregates.ProgrammingLanguage;
+import com.fromzero.backend.projects.domain.valueobjects.ProjectType;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
 
 import java.util.List;
@@ -26,4 +27,6 @@ public record ProjectResource(
         this(id,name,description,state,progress,ownerId,null,candidatesList
                 ,languages,frameworks, type,budget,methodologies);
     }
+
+
 }
