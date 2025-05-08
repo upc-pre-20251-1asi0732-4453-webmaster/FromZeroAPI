@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping(value = "/api/v1/deliverables", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "api/v1/Projects/{projectId}/deliverables", produces = APPLICATION_JSON_VALUE)
 @Tag(name = "Deliverables", description = "Deliverables Management Endpoints")
 public class DeliverableController {
     private final DeliverableCommandService deliverableCommandService;
@@ -73,7 +73,7 @@ public class DeliverableController {
         return new  ResponseEntity<>(deliverableResource, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/project/{projectId}/deliverables")
+    @GetMapping(value = "")
     @Operation(summary = "Get All Deliverables By Project Id")
     public ResponseEntity<List<DeliverableResource>> getAllDeliverablesByProjectId(@PathVariable Long projectId){
         var project = this.projectContextFacade.getProjectById(projectId);
@@ -97,7 +97,7 @@ public class DeliverableController {
     }
 
     @Operation(summary = "Upload Deliverable")
-    @PatchMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}/upload")
+    @PatchMapping(value = "/{deliverableId}/upload")
     public ResponseEntity<DeliverableResource> sendDeliverable(@PathVariable Long deliverableId, @PathVariable Long projectId,
                                              @RequestBody String developerMessage){
         var updateDeveloperMessageCommand = new UpdateDeveloperDescriptionCommand(deliverableId,developerMessage, projectId);
@@ -108,7 +108,7 @@ public class DeliverableController {
     }
 
     @Operation(summary = "Review Deliverable")
-    @PatchMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}/review")
+    @PatchMapping(value = "/{deliverableId}/review")
     public ResponseEntity<DeliverableResource> reviewDeliverable(@PathVariable Long deliverableId,
                                                                  @RequestBody Boolean accepted, @PathVariable String projectId){
         var updateDeliverableStatusCommand = new UpdateDeliverableStatusCommand(deliverableId,accepted);
@@ -134,7 +134,7 @@ public class DeliverableController {
     }
 
     @Operation(summary = "Edit Deliverable")
-    @PutMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}")
+    @PutMapping(value = "/{deliverableId}")
     public ResponseEntity<DeliverableResource> updateDeliverable(@PathVariable Long deliverableId, @RequestBody UpdateDeliverableResource resource, @PathVariable String projectId) {
         UpdateDeliverableCommand command = new UpdateDeliverableCommand(deliverableId, resource.name(), resource.description(), resource.date());
         var updatedDeliverable = deliverableCommandService.handle(command);
@@ -146,7 +146,7 @@ public class DeliverableController {
     }
 
     @Operation(summary = "Delete Deliverable")
-    @DeleteMapping(value = "/Projects/{projectId}/deliverables/{deliverableId}/")
+    @DeleteMapping(value = "/{deliverableId}/")
     public ResponseEntity<Void> deleteDeliverable(@PathVariable Long projectId, @PathVariable Long deliverableId) {
         var deleteDeliverableCommand = new com.fromzero.backend.deliverables.domain.model.commands.DeleteDeliverableCommand(projectId,deliverableId);
         this.deliverableCommandService.handle(deleteDeliverableCommand);
