@@ -42,7 +42,7 @@ class DeveloperControllerTest {
     private UpdateDeveloperResource devResource;
 
     @BeforeEach
-    void setUp() {
+     void setUp() {
         MockitoAnnotations.initMocks(this);
 
         Role role = new Role(Roles.ROLE_DEVELOPER);
