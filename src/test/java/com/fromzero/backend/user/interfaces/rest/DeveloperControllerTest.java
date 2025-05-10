@@ -4,9 +4,15 @@ import com.fromzero.backend.iam.domain.model.aggregates.User;
 import com.fromzero.backend.iam.domain.model.valueobjects.Roles;
 import com.fromzero.backend.iam.domain.model.entities.Role;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
+import com.fromzero.backend.user.domain.model.commands.UpdateDeveloperCommand;
 import com.fromzero.backend.user.domain.model.queries.GetAllDevelopersAsyncQuery;
 import com.fromzero.backend.user.domain.services.DeveloperCommandService;
 import com.fromzero.backend.user.domain.services.DeveloperQueryService;
+import com.fromzero.backend.user.domain.model.queries.GetDeveloperByIdQuery;
+import com.fromzero.backend.user.domain.model.queries.GetDeveloperByUserIdAsyncQuery;
+import com.fromzero.backend.user.interfaces.rest.resources.DeveloperResource;
+
+import com.fromzero.backend.user.interfaces.rest.resources.UpdateDeveloperResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -32,6 +39,7 @@ class DeveloperControllerTest {
 
     private Developer developer;
     private User user;
+    private UpdateDeveloperResource devResource;
 
     @BeforeEach
     void setUp() {
@@ -58,6 +66,15 @@ class DeveloperControllerTest {
         developer.setCompletedProjects(5);
         developer.setSpecialties("Java, Python");
         developer.setProfileImgUrl("profileImgUrl");
+
+        devResource = new UpdateDeveloperResource(
+                developer.getFirstName(),
+                developer.getLastName(),
+                developer.getDescription(),
+                developer.getCountry(),
+                developer.getPhone(),
+                developer.getSpecialties(),
+                developer.getProfileImgUrl());
     }
 
     @Test
@@ -68,13 +85,20 @@ class DeveloperControllerTest {
 
     @Test
     void getDeveloperById() {
+        when(developerQueryService.handle(any(GetDeveloperByIdQuery.class))).thenReturn(Optional.of(developer));
+        assertNotNull(developerController.getDeveloperById(developer.getId()));
     }
 
     @Test
     void getDeveloperByUserId() {
+        when(developerQueryService.handle(any(GetDeveloperByUserIdAsyncQuery.class))).thenReturn(Optional.of(developer));
+        assertNotNull(developerController.getDeveloperByUserId(user.getId()));
     }
 
     @Test
     void updateDeveloper() {
+        when(developerCommandService.handle(any(UpdateDeveloperCommand.class))).thenReturn(Optional.of(developer));
+        developerController.updateDeveloper(developer.getId(), devResource);
+        verify(developerCommandService, times(1)).handle(any(UpdateDeveloperCommand.class));
     }
 }
