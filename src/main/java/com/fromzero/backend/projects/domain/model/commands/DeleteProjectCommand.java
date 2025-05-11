@@ -1,4 +1,9 @@
 package com.fromzero.backend.projects.domain.model.commands;
 
-public record DeleteProjectCommand(Long projectId) {
+public record DeleteProjectCommand (Long projectId) {
+    public DeleteProjectCommand {
+        if (projectId == null) {
+            throw new IllegalArgumentException("Project ID cannot be null");
+        }
+    }
 }
