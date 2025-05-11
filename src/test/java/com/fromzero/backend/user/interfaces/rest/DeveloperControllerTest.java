@@ -5,7 +5,9 @@ import com.fromzero.backend.iam.domain.model.valueobjects.Roles;
 import com.fromzero.backend.iam.domain.model.entities.Role;
 import com.fromzero.backend.user.domain.model.aggregates.Developer;
 import com.fromzero.backend.user.domain.model.commands.UpdateDeveloperCommand;
+import com.fromzero.backend.user.domain.model.commands.UpdateEnterpriseCommand;
 import com.fromzero.backend.user.domain.model.queries.GetAllDevelopersAsyncQuery;
+import com.fromzero.backend.user.domain.model.queries.GetEnterpriseByUserIdAsyncQuery;
 import com.fromzero.backend.user.domain.services.DeveloperCommandService;
 import com.fromzero.backend.user.domain.services.DeveloperQueryService;
 import com.fromzero.backend.user.domain.model.queries.GetDeveloperByIdQuery;
@@ -96,9 +98,14 @@ class DeveloperControllerTest {
     }
 
     @Test
-    void updateDeveloper() {
+    void updateDeveloperByUserId() {
+        when(developerQueryService.handle(any(GetDeveloperByUserIdAsyncQuery.class))).thenReturn(Optional.of(developer));
         when(developerCommandService.handle(any(UpdateDeveloperCommand.class))).thenReturn(Optional.of(developer));
-        developerController.updateDeveloper(developer.getId(), devResource);
+
+        var response = developerController.updateDeveloperByUserId(developer.getId(), devResource);
+
+        assertEquals(200, response.getStatusCodeValue());
+        verify(developerQueryService, times(1)).handle(any(GetDeveloperByUserIdAsyncQuery.class));
         verify(developerCommandService, times(1)).handle(any(UpdateDeveloperCommand.class));
     }
 }

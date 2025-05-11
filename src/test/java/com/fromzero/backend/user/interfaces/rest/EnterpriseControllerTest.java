@@ -99,9 +99,14 @@ class EnterpriseControllerTest {
     }
 
     @Test
-    void updateEnterprise() {
+    void updateEnterpriseByUserId_Success() {
+        when(enterpriseQueryService.handle(any(GetEnterpriseByUserIdAsyncQuery.class))).thenReturn(Optional.of(enterprise));
         when(enterpriseCommandService.handle(any(UpdateEnterpriseCommand.class))).thenReturn(Optional.of(enterprise));
-        enterpriseController.updateEnterprise(enterprise.getId(), enterpriseResource);
+
+        var response = enterpriseController.updateEnterpriseByUserId(enterprise.getId(), enterpriseResource);
+
+        assertEquals(200, response.getStatusCodeValue());
+        verify(enterpriseQueryService, times(1)).handle(any(GetEnterpriseByUserIdAsyncQuery.class));
         verify(enterpriseCommandService, times(1)).handle(any(UpdateEnterpriseCommand.class));
     }
 }
