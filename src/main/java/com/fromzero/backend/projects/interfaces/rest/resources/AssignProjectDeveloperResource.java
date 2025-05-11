@@ -24,13 +24,9 @@ public record AssignProjectDeveloperResource(
             System.out.println("description is null");
             throw new NullPointerException("description is null");
         }
-        if(candidates.isEmpty()){
+        if(candidates == null){
             System.out.println("there are no candidates to assign as developer");
             throw new NullPointerException("there are no candidates to assign as developer");
-        }
-        if(developer != null){
-            System.out.println("developer is already assigned");
-            throw new IllegalArgumentException("developer is already assigned");
         }
     }
 }
