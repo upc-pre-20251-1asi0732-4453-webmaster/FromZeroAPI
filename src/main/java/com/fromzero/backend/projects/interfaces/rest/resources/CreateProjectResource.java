@@ -13,5 +13,4 @@ public record CreateProjectResource(
         ProjectType type,
         String budget,
         String methodologies){
-
 }
