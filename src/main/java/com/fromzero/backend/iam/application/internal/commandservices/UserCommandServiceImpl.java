@@ -112,7 +112,7 @@ public class UserCommandServiceImpl implements UserCommandService {
                 command.enterpriseName(),
                 "No description provided.",
                 "No country provided.",
-                "No phone provided.",
+                "11111111111",
                 "999 999 999",
                 "No website provided.",
                 "https://cdn-icons-png.flaticon.com/512/3237/3237472.png",
