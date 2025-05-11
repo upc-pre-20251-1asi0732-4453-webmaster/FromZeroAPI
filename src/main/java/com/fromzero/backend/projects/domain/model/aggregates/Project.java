@@ -1,6 +1,7 @@
 package com.fromzero.backend.projects.domain.model.aggregates;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fromzero.backend.deliverables.domain.model.aggregates.Deliverable;
 import com.fromzero.backend.projects.domain.model.commands.CreateProjectCommand;
 import com.fromzero.backend.projects.domain.valueobjects.ProjectState;
 import com.fromzero.backend.projects.domain.valueobjects.ProjectType;
@@ -93,7 +94,6 @@ public class Project extends AuditableAbstractAggregateRoot<Project> {
 
     }
 
-    public Project(){
-
+    public Project() {
     }
 }

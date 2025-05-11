@@ -220,6 +220,5 @@ public class DeliverableCommandServiceImpl implements DeliverableCommandService 
             deliverableRepository.save(actualDeliverable);
         }
     }
-
 }
 

@@ -31,7 +31,7 @@ public class Developer extends AuditableAbstractAggregateRoot<Developer> {
 
     private String specialties = "No specialties provided.";
 
-    private String profileImgUrl = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
+    private String profileImgUrl = "https://hwqkibwyspmfwkzjlumy.supabase.co/storage/v1/object/public/profile/profile.png";
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

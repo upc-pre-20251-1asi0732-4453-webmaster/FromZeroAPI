@@ -31,7 +31,6 @@ public class Deliverable extends AuditableAbstractAggregateRoot<Deliverable> {
     @Column(nullable = false)
     private DeliverableStatus state;
 
-
     private String fileUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

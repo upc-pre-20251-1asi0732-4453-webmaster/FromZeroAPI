@@ -11,6 +11,5 @@ public interface ProjectCommandService {
     Optional<Project> handle(UpdateProjectCandidatesListCommand command);
     Optional<Project> handle(AssignProjectDeveloperCommand command);
     Optional<Project> handle(UpdateProjectProgressCommand command);
-
     void handle(DeleteProjectCommand command);
 }

@@ -57,9 +57,12 @@ public class EnterpriseController {
         return ResponseEntity.ok(enterpriseResource);
     }
 
-    @PutMapping(value = "/{enterpriseId}")
-    public ResponseEntity<EnterpriseResource> updateEnterprise(@PathVariable Long enterpriseId, @RequestBody UpdateEnterpriseResource resource) {
-        var updateEnterpriseCommand = UpdateEnterpriseCommandFromResourceAssembler.toCommandFromResource(enterpriseId, resource);
+    @PutMapping(value = "/{userId}")
+        public ResponseEntity<EnterpriseResource> updateEnterpriseByUserId(@PathVariable Long userId, @RequestBody UpdateEnterpriseResource resource) {
+        var getEnterpriseByUserIdQuery = new GetEnterpriseByUserIdAsyncQuery(userId);
+        var enterprise = enterpriseQueryService.handle(getEnterpriseByUserIdQuery);
+
+        var updateEnterpriseCommand = UpdateEnterpriseCommandFromResourceAssembler.toCommandFromResource(enterprise.get().getUserId(), resource);
         var updatedEnterprise = enterpriseCommandService.handle(updateEnterpriseCommand);
         if (updatedEnterprise.isEmpty()) {
             return ResponseEntity.notFound().build();

@@ -59,9 +59,12 @@ public class DeveloperController {
         return ResponseEntity.ok(developerResource);
     }
 
-    @PutMapping(value = "/{developerId}")
-    public ResponseEntity<DeveloperResource> updateDeveloper(@PathVariable Long developerId, @RequestBody UpdateDeveloperResource resource) {
-        var updateDeveloperCommand = UpdateDeveloperCommandFromResourceAssembler.toCommandFromResource(developerId, resource);
+    @PutMapping(value = "/{userId}")
+    public ResponseEntity<DeveloperResource> updateDeveloperByUserId(@PathVariable Long userId, @RequestBody UpdateDeveloperResource resource) {
+        var getDeveloperByUserIdAsyncQuery = new GetDeveloperByUserIdAsyncQuery(userId);
+        var developer = developerQueryService.handle(getDeveloperByUserIdAsyncQuery);
+
+        var updateDeveloperCommand = UpdateDeveloperCommandFromResourceAssembler.toCommandFromResource(developer.get().getUserId(), resource);
         var updatedDeveloper = developerCommandService.handle(updateDeveloperCommand);
         if (updatedDeveloper.isEmpty()) {
             return ResponseEntity.notFound().build();
