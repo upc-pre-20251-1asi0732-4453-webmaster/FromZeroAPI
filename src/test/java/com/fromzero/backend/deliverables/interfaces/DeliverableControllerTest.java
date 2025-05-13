@@ -155,7 +155,7 @@ class DeliverableControllerTest {
         deliverable.setId(1L);
         deliverable.setName("Deliverable A");
         deliverable.setDescription("Description of Deliverable A");
-        deliverable.setDeadline(LocalDateTime.now());
+        deliverable.setDeadline(LocalDateTime.parse("2025-08-15T14:30:45"));
         deliverable.setState(DeliverableStatus.PENDING);
         deliverable.setFileUrl("https://example.com/deliverable-a");
         deliverable.setProject(project);
