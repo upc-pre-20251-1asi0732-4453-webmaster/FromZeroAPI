@@ -1,6 +1,7 @@
 package com.fromzero.backend.deliverables.interfaces.rest.resources;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 public record UpdateDeliverableResource(String name, String description, String date) {
@@ -18,8 +19,8 @@ public record UpdateDeliverableResource(String name, String description, String 
             throw new NullPointerException("date is null");
         }
         try {
-            LocalDate parsedDate = LocalDate.parse(date);
-            if (parsedDate.isBefore(LocalDate.now())) {
+            LocalDateTime parsedDate = LocalDateTime.parse(date);
+            if (parsedDate.isBefore(LocalDateTime.now())) {
                 System.out.println("date is in the past");
                 throw new IllegalArgumentException("date cannot be in the past");
             }
