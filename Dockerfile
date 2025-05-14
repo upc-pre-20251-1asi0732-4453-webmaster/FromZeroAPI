@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for FromZeroAPI
 
 # 1. Build stage: compile the application
-FROM maven:3.8.7-openjdk-17-slim AS builder
+FROM maven:3.8.7-openjdk-17 AS builder
 WORKDIR /app
 
 # Copy only necessary files for Maven to download dependencies
@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # 2. Runtime stage: run the application in a minimal image
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-slim
 
 # Create a non-root user and group for security
 RUN addgroup --system spring && adduser --system spring -G spring
