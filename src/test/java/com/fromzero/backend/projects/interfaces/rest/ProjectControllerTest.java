@@ -219,4 +219,22 @@ class ProjectControllerTest {
         when(projectQueryService.handle(any(GetProjectByIdQuery.class))).thenReturn(Optional.of(project));
         assertNotNull(projectController.deleteProject(project.getId()));
     }
+
+    @Test
+    void createProjectAndGetByIdIntegration() {
+        // Arrange
+        when(projectCommandService.handle(any(CreateProjectCommand.class))).thenReturn(Optional.of(project));
+        when(projectQueryService.handle(any(GetProjectByIdQuery.class))).thenReturn(Optional.of(project));
+
+        // Act
+        var createdProjectResponse = projectController.createProject(createProjectResource);
+        var fetchedProjectResponse = projectController.getProjectById(project.getId());
+
+        // Assert
+        assertNotNull(createdProjectResponse);
+        assertNotNull(fetchedProjectResponse);
+        assertEquals(project.getName(), fetchedProjectResponse.getBody().name());
+        assertEquals(project.getDescription(), fetchedProjectResponse.getBody().description());
+        assertEquals(project.getType(), fetchedProjectResponse.getBody().type());
+    }
 }

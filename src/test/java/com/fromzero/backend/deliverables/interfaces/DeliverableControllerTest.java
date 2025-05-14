@@ -216,8 +216,46 @@ class DeliverableControllerTest {
 
     @Test
     void deleteDeliverable() {
-    doNothing().when(deliverableCommandService).handle(any(DeleteDeliverableCommand.class));
-    assertNotNull(deliverableController.deleteDeliverable(deliverable.getProject().getId(), deliverable.getId()));
-
+        doNothing().when(deliverableCommandService).handle(any(DeleteDeliverableCommand.class));
+        assertNotNull(deliverableController.deleteDeliverable(deliverable.getProject().getId(), deliverable.getId()));
     }
+
+    @Test
+    void createDeliverableAndGetByIdIntegration() {
+        // Arrange
+        when(deliverableCommandService.handle(any(CreateDeliverableCommand.class))).thenReturn(Optional.of(deliverable));
+        when(deliverableQueryService.handle(any(GetDeliverableByIdQuery.class))).thenReturn(Optional.of(deliverable));
+
+        // Act
+        var createdDeliverableResponse = deliverableController.createDeliverable(createDeliverableResource);
+        var fetchedDeliverableResponse = deliverableController.getDeliverableById(deliverable.getId());
+
+        // Assert
+        assertNotNull(createdDeliverableResponse);
+        assertNotNull(fetchedDeliverableResponse);
+        assertEquals(deliverable.getName(), fetchedDeliverableResponse.getBody().name());
+        assertEquals(deliverable.getDescription(), fetchedDeliverableResponse.getBody().description());
+        assertEquals(deliverable.getProject().getId(), fetchedDeliverableResponse.getBody().projectId());
+    }
+
+    @Test
+    void reviewDeliverableIntegration() {
+        // Arrange
+        when(deliverableCommandService.handle(any(UpdateDeliverableStatusCommand.class))).thenReturn(Optional.of(deliverable));
+        when(deliverableQueryService.handle(any(GetDeliverableByIdQuery.class))).thenReturn(Optional.of(deliverable));
+
+        // Act
+        var reviewResponse = deliverableController.reviewDeliverable(deliverable.getId(), true, project.getId().toString());
+        var updatedDeliverable = deliverableController.getDeliverableById(deliverable.getId());
+
+        // Assert
+        assertNotNull(reviewResponse);
+        assertNotNull(updatedDeliverable);
+
+        assertEquals(deliverable.getId(), updatedDeliverable.getBody().id());
+        assertEquals(deliverable.getProject().getId(), updatedDeliverable.getBody().projectId());
+    }
+
+
+
 }
